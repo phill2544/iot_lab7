@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <title>esp8266 Web Server</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=width-device, initial-scale=1.0">
+</head>
+
+<body>
+  <p> LED Status: <span id="led-state">__</span> </p>
+  <button onclick="myFunction()" style='font-size:50px'> TOGGLE </button>
+</body>
+<script>
+  function myFunction() {
+    console.log("button was clicked!");
+    var xhr = new XMLHttpRequest();
+    var url = "/ledstate";
+    let status
+
+    xhr.onreadystatechange = function () {
+      if (JSON.stringify(xhr.responseText)  === `"Off"`) {
+        status = 1
+      } else {
+        status = 0
+      }
+      fetch('http://localhost:3030/UpdateStatus/'+ JSON.stringify(status) ).then((res) => {
+        console.log('---- in -----');
+      });
+      if (this.readyState == 4 && this.status == 200) {
+        document.getElementById("led-state").innerHTML = this.responseText;
+      }
+    };
+
+    xhr.open("GET", url, true);
+    xhr.send();
+  };
+  document.addEventListener('DOMContentLoaded', myFunction, false);
+</script>
+
+</html>
